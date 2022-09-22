@@ -1,1 +1,24 @@
+clc
+clear all
 
+% use this if all files are numbered with year
+a = 1
+for y=1951:1:2021
+    X="path to nc files folder"+num2str(y)+".nc";     % read each .nc file
+    data=ncread(X,'RAINFALL');                        % read rainfall data
+    lat = ncread(X,'LATITUDE');                       % read latitude data
+    lon = ncread(X,'LONGITUDE');                      % read longitude data
+% convert 3 dimensional data into a 2D matrix, where data in each row belongs to one gridpoint
+   m=1;
+    for c = 1:length(lon)
+        for d = 1:length(lat)
+            longitude(m,1) = lon(c,1);
+            latitude(m,1) = lat(d,1);
+            daily_prep{a}(m,:) = data(c,d,:);
+            m=m+1;
+        end
+    end
+% remove rows with nan values
+      daily_prep{a} = daily_prep{a}(all(~isnan(daily_prep{a}),2),:);
+a = a+1
+end
